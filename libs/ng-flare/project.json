@@ -1,0 +1,71 @@
+{
+  "name": "ng-flare",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/ng-flare/src",
+  "prefix": "fl",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build-angular": {
+      "executor": "@nx/angular:package",
+      "outputs": ["{workspaceRoot}/dist/ng-flare"],
+      "options": {
+        "project": "libs/ng-flare/ng-package.json",
+        "tailwindConfig": "libs/ng-flare/tailwind.config.js"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/ng-flare/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/ng-flare/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "build-lib": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/ng-flare"],
+      "configurations": {
+        "production": {
+          "commands": [
+            "nx run ng-flare:build-angular:production",
+            "tailwindcss -c libs/ng-flare/tailwind.config.js -i ./libs/ng-flare/src/styles/light-theme.css -o ./dist/libs/ng-flare/themes/light-theme.css -m"
+          ]
+        },
+        "development": {
+          "commands": [
+            "nx run ng-flare:build-angular:development",
+            "tailwindcss -c libs/ng-flare/tailwind.config.js -i ./libs/ng-flare/src/styles/light-theme.css -o ./dist/libs/ng-flare/themes/light-theme.css"
+          ]
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/libs/ng-flare"],
+      "configurations": {
+        "production": {
+          "commands": ["nx run ng-flare:build-lib:production"],
+          "parallel": false
+        },
+        "development": {
+          "commands": ["nx run ng-flare:build-lib:development"],
+          "parallel": false
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/ng-flare"],
+      "options": {
+        "jestConfig": "libs/ng-flare/jest.config.ts"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}
